@@ -1,40 +1,13 @@
-# Pase de Asistencia EPOANT · GitHub Pages V3.16
+# Pase de Asistencia EPOANT · GitHub Pages
 
-Frontend preparado para publicarse en GitHub Pages y utilizar el backend existente de Google Apps Script.
+Este paquete usa GitHub Pages únicamente como dominio/contenedor visual y ejecuta la aplicación funcional dentro de Google Apps Script.
 
-## Archivos que sí van al repositorio de GitHub
+## Por qué
+La interfaz original usa `google.script.run`, una API que solo funciona correctamente dentro de HtmlService de Google Apps Script. El intento de replicarla mediante `postMessage` desde GitHub Pages puede quedar aislado por el sandbox interno de Apps Script.
 
-- `index.html` — interfaz completa del sistema.
-- `config.js` — URL del backend Apps Script y dominio personalizado.
-- `apps-script-bridge.js` — puente de comunicación entre GitHub Pages y Apps Script.
-- `CNAME` — dominio personalizado `asistenciaepoant.edupsic.com`.
-- `.nojekyll` — evita procesamiento innecesario de Jekyll.
-
-## Backend asociado
-
-El frontend está configurado para esta implementación de Apps Script:
-
-`https://script.google.com/macros/s/AKfycbwhSxb01ovGGSy86Z_rA3lZZH0yqljZrWZeiRvHXkb8zldU2wKviJbBOk7bPc0sy-A/exec`
-
-Para que el puente funcione, el proyecto de Apps Script debe actualizarse con el archivo separado `Code_Asistencia_EPOANT_V3_16_GitHubBridge.gs` y publicarse como Aplicación web.
-
-## DNS recomendado
-
-En Squarespace Domains:
-
-- Tipo: `CNAME`
-- Nombre: `asistencia`
-- Datos del alias: `eriobeth-art.github.io`
-- TTL: `1 hora`
-
-## GitHub Pages
-
-1. Sube estos archivos a la raíz del repositorio.
-2. Ve a **Settings → Pages**.
-3. Publica desde la rama `main`, carpeta `/ (root)`.
-4. En **Custom domain** usa `asistenciaepoant.edupsic.com`.
-5. Cuando GitHub valide el DNS, activa **Enforce HTTPS**.
-
-## Seguridad
-
-El backend conserva el inicio de sesión y los tokens del sistema. El puente del Apps Script acepta llamadas únicamente desde `https://asistenciaepoant.edupsic.com` y `https://eriobeth-art.github.io`.
+## Instalación
+1. Sustituye `Code.gs` en Apps Script con `Code_Asistencia_EPOANT_V3_16_EmbedFix.gs`.
+2. Crea una nueva versión de la implementación web conservando la misma URL `/exec`.
+3. En GitHub, sustituye `index.html` y `CNAME` por los de este paquete.
+4. El dominio debe ser `asistenciaepoant.edupsic.com`.
+5. Abre el dominio en una ventana privada y prueba inicio de sesión y guardado.
