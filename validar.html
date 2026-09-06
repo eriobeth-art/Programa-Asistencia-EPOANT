@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123e67">
+  <title>Validación institucional de justificante · EPOANT</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;background:#f3f6f9;color:#172033;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .top{background:linear-gradient(135deg,#0b3158,#174f7f);padding:24px 18px 52px;color:#fff;text-align:center}
+    .logo{width:92px;height:92px;object-fit:contain;background:#fff;border-radius:22px;padding:8px;box-shadow:0 10px 25px rgba(0,0,0,.18)}
+    .inst{font-weight:850;font-size:18px;margin:12px auto 3px;max-width:760px} .area{opacity:.9;font-size:14px}
+    main{max-width:760px;margin:-30px auto 36px;padding:0 16px}
+    .card{background:#fff;border:1px solid #dbe4ec;border-radius:20px;padding:24px;box-shadow:0 16px 40px rgba(20,45,70,.10)}
+    .status{padding:16px;border-radius:14px;text-align:center;font-size:19px;font-weight:900;margin-bottom:18px}
+    .ok{background:#eaf8ef;color:#166534;border:1px solid #b8e0c6} .bad{background:#fff1f0;color:#b42318;border:1px solid #f1c0bc} .wait{background:#eef4fb;color:#31506f;border:1px solid #cad8e7}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px} .item{border:1px solid #dbe4ec;background:#f8fafc;border-radius:12px;padding:12px} .item b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#617085;margin-bottom:4px} .item span{font-weight:760;word-break:break-word}
+    .wide{grid-column:1/-1} .note{margin-top:18px;background:#fff8df;border:1px solid #ead58d;border-radius:12px;padding:12px;font-size:12px;line-height:1.5;color:#685718}
+    .foot{text-align:center;color:#6b7788;font-size:11px;margin-top:16px;line-height:1.5} .secure{display:inline-flex;gap:6px;align-items:center;background:#e8f3ee;color:#164a38;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;margin-top:10px}
+    @media(max-width:560px){.grid{grid-template-columns:1fr} .wide{grid-column:auto} .card{padding:18px} .inst{font-size:16px}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <img class="logo" src="logo-epoant.png" alt="Logo EPOANT">
+    <div class="inst">ESCUELA PREPARATORIA OFICIAL ANEXA A LA NORMAL DE TEJUPILCO</div>
+    <div class="area">Servicio de Orientación Educativa · Validación institucional</div>
+  </header>
+  <main>
+    <section class="card">
+      <div id="status" class="status wait">Verificando documento…</div>
+      <div id="content" class="grid" style="display:none">
+        <div class="item"><b>Folio</b><span id="folio">—</span></div>
+        <div class="item"><b>Estado</b><span id="estado">—</span></div>
+        <div class="item wide"><b>Estudiante</b><span id="nombre">—</span></div>
+        <div class="item"><b>Grado</b><span id="grado">—</span></div>
+        <div class="item"><b>Grupo</b><span id="grupo">—</span></div>
+        <div class="item wide"><b>Días justificados</b><span id="dias">—</span></div>
+        <div class="item"><b>Emisión</b><span id="emision">—</span></div>
+        <div class="item"><b>Código de autenticidad</b><span id="codigo">—</span></div>
+        <div class="item wide"><b>Huella documental SHA-256 (abreviada)</b><span id="huella">—</span></div>
+      </div>
+      <div id="note" class="note">La consulta verifica únicamente autenticidad y vigencia del folio institucional. No muestra CURP, teléfonos, correos ni otros datos personales.</div>
+      <div class="foot"><span class="secure">● Documento controlado EPOANT</span><br>Dominio institucional: asistenciaepoant.edupsic.com</div>
+    </section>
+  </main>
+<script>
+(function(){
+  const BACKEND="https://script.google.com/macros/s/AKfycbwhSxb01ovGGSy86Z_rA3lZZH0yqljZrWZeiRvHXkb8zldU2wKviJbBOk7bPc0sy-A/exec";
+  const qs=new URLSearchParams(location.search);
+  const token=(qs.get('t')||'').trim().toUpperCase().replace(/[^A-F0-9]/g,'');
+  const status=document.getElementById('status');
+  const content=document.getElementById('content');
+  let finished=false;
+  function set(id,v){document.getElementById(id).textContent=v||'—'}
+  function render(r){
+    finished=true;
+    const ok=!!(r&&r.valido);
+    status.className='status '+(ok?'ok':'bad');
+    status.textContent=ok?'✓ DOCUMENTO VÁLIDO · VIGENTE':'✕ DOCUMENTO NO VÁLIDO / NO LOCALIZADO';
+    content.style.display='grid';
+    set('folio',r&&r.folio); set('estado',r&&r.estado); set('nombre',r&&r.nombre);
+    set('grado',r&&r.grado); set('grupo',r&&r.grupo); set('dias',r&&r.diasTexto);
+    set('emision',r&&r.fechaEmision); set('codigo',r&&r.codigo); set('huella',r&&r.huella);
+  }
+  if(!/^[A-F0-9]{32}$/.test(token)){render({valido:false,estado:'TOKEN NO VÁLIDO'});return;}
+  const cb='EPOANT_VALIDAR_'+Date.now().toString(36);
+  window[cb]=function(r){try{render(r||{})}finally{try{delete window[cb]}catch(e){}}};
+  const s=document.createElement('script');
+  s.src=BACKEND+'?api=validar&t='+encodeURIComponent(token)+'&callback='+encodeURIComponent(cb)+'&_='+Date.now();
+  s.async=true;
+  s.onerror=function(){if(!finished){status.className='status bad';status.textContent='No fue posible consultar el registro institucional.'}};
+  document.head.appendChild(s);
+  setTimeout(function(){if(!finished){status.className='status bad';status.textContent='La validación tardó demasiado. Intenta nuevamente.'}},15000);
+})();
+</script>
+</body></html>
