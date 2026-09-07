@@ -1,19 +1,17 @@
-EPOANT · Pase de Asistencia con Notificaciones y Cumplimiento
+CORRECCIÓN DE CARGA · EPOANT
 
-SUBE A LA RAÍZ DEL REPOSITORIO DE GITHUB:
-- index.html
-- CNAME
-- .nojekyll
+Este index.html de GitHub NO ejecuta google.script.run directamente.
+Solo muestra dentro del dominio institucional la aplicación publicada por Apps Script.
 
-IMPORTANTE:
-1. Sustituye el index.html anterior.
-2. Haz Commit changes.
-3. Espera 1–3 minutos.
-4. Abre https://asistenciaepoant.edupsic.com
-5. Recarga con Ctrl+Shift+R o Cmd+Shift+R.
+EN GITHUB:
+- sustituye index.html por este archivo
+- conserva/sube CNAME y .nojekyll
+- NO subas el Index.html funcional de Apps Script a GitHub
 
-El módulo nuevo debe aparecer como:
-Notificaciones · Cumplimiento
+EN APPS SCRIPT DEL PASE DE ASISTENCIA:
+- Code.gs = versión Notificaciones y Cumplimiento
+- Index.html = interfaz completa Notificaciones y Cumplimiento
 
-Versión visible:
-V5.7.1 · Notificaciones y cumplimiento
+Después:
+Implementar > Administrar implementaciones > Editar > Nueva versión > Implementar.
+Luego recarga https://asistenciaepoant.edupsic.com con Ctrl+Shift+R o Cmd+Shift+R.
